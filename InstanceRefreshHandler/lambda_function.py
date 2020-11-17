@@ -107,6 +107,20 @@ def trigger_auto_scaling_instance_refresh(asg_name, strategy="Rolling",
 def lambda_handler(event, context):
 
     # Load SNS message body
+    	    asg_name = os.environ['AutoScalingGroupName']
+    print(event)
+    
+    if event['Records'][0]['Sns']['Message'] == 'demo':
+        # Get latest version for Launch template to use as source and create
+        # new version with new AMI
+        lt_id = 'lt-037d88e6a30a9813e'
+        ami_id = 'ami-00d01cea8e2be4cc7'
+        create_launch_template_version_with_new_ami(lt_id, ami_id)
+        # Trigger Auto Scaling group Instance Refresh
+        trigger_auto_scaling_instance_refresh(asg_name)
+        return("Success")
+    
+    
     ib_notification = json.loads(event['Records'][0]['Sns']['Message'])
 
     asg_name = os.environ['AutoScalingGroupName']
